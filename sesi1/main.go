@@ -81,7 +81,6 @@ func learnSwitch2() {
 }
 
 func learnMap() {
-	
 
 	var employee struct {
 		Firstname string
@@ -94,14 +93,10 @@ func learnMap() {
 	employee.Lastname = "Santoso"
 	employee.Address = "Jakarta"
 	employee.Age = 20
-	
-	func (e Employee) GetFullName() string {
-		return e.Firstname + " " + e.Lastname
-	}
 
 	// {} , Record<string, string>
 
-	fmt.Printf("Name: %s, Address: %s, Age: %d\n", person["name"], person["address"], person["age"])
+	// fmt.Printf("Name: %s, Address: %s, Age: %d\n", person["name"], person["address"], person["age"])
 }
 
 func main() {
