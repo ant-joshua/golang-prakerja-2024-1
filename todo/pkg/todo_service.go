@@ -19,18 +19,21 @@ var todoList = models.Todos{
 	},
 }
 
-func GetAllTodos() models.Todos {
+type TodoService struct {
+}
+
+func (s *TodoService) GetAllTodos() models.Todos {
 
 	return todoList
 }
 
-func AddNewTodo(newTodo models.Todo) models.Todo {
+func (s *TodoService) AddNewTodo(newTodo models.Todo) models.Todo {
 
 	todoList = append(todoList, newTodo)
 	return newTodo
 }
 
-func GetTodoById(id int) (*models.Todo, error) {
+func (s *TodoService) GetTodoById(id int) (*models.Todo, error) {
 	var todo *models.Todo
 
 	for _, t := range todoList {
@@ -46,7 +49,7 @@ func GetTodoById(id int) (*models.Todo, error) {
 	return todo, nil
 }
 
-func UpdateTodoById(id int, updatedTodo models.Todo) (*models.Todo, error) {
+func (s *TodoService) UpdateTodoById(id int, updatedTodo models.Todo) (*models.Todo, error) {
 	var todo *models.Todo
 	for i, t := range todoList {
 		if t.ID == id {
@@ -62,7 +65,7 @@ func UpdateTodoById(id int, updatedTodo models.Todo) (*models.Todo, error) {
 	return todo, nil
 }
 
-func DeleteTodoById(id int) error {
+func (s *TodoService) DeleteTodoById(id int) error {
 	for i, t := range todoList {
 		if t.ID == id {
 			deleted := slices.Delete(todoList, i, i+1)
