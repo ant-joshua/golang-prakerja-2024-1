@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css"
+    />
+  </head>
+  <body>
+    <div id="notification"></div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+    <script type="text/javascript">
+      var eventSource = new EventSource("http://localhost:5000/events");
+
+      eventSource.onmessage = function (event) {
+        var notification = document.getElementById("notification");
+        var message = document.createElement("p");
+
+        message.innerHTML = "Receive message: " + event.data;
+
+        Swal.fire({
+          title: "Received Notification",
+          text: event.data,
+          icon: "info",
+        });
+
+        notification.appendChild(message);
+      };
+
+      eventSource.onerror = function (error) {
+        console.error("EventSource failed:", error);
+        eventSource.close();
+      };
+    </script>
+  </body>
+</html>

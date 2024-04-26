@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"time"
-	service "todo/pkg"
 	"todo/pkg/models"
+	"todo/pkg/service"
 )
 
 func todoExample() {

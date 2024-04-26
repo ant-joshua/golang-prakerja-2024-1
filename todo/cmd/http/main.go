@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
-	service "todo/pkg"
 	"todo/pkg/handlers"
+	"todo/pkg/service"
 )
 
 func main() {

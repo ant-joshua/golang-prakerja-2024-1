@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	service "todo/pkg"
+	"todo/pkg/service"
 )
 
 type TodoHandler struct {
