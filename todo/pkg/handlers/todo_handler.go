@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
@@ -57,7 +58,9 @@ func (h *TodoHandler) GetAllTodos(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
-	var createTodoRequest models.CreateTodoRequest
+	w.Header().Set("Content-Type", "application/json")
+	// var createTodoRequest models.CreateTodoRequest
+	var createTodoRequest models.CreateProjectRequest
 	json.NewDecoder(r.Body).Decode(&createTodoRequest)
 
 	err := Validate.Struct(createTodoRequest)
@@ -66,21 +69,28 @@ func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 
 		customErr := make(map[string]string)
 
-		errs := err.(validator.ValidationErrors)
+		// errs := err.(validator.ValidationErrors)
 
-		for _, e := range errs {
-			fmt.Printf("Error: %v\n", e)
-			// fmt.Printf("Error %v\n", e.Type().Key())
-			fmt.Printf("Error %v\n", e.Field())
+		var errs validator.ValidationErrors
 
-			customErr[e.Field()] = e.Tag()
+		if errors.As(err, &errs) {
+			w.WriteHeader(http.StatusBadRequest)
+
+			validationErr := ErrorValidationHandlerMap(errs)
+			validationResp := ErrorValidateResponse(validationErr)
+
+			json.NewEncoder(w).Encode(validationResp)
 		}
+
+		// for _, e := range errs {
+		// 	fmt.Printf("Error: %v\n", e)
+		// 	// fmt.Printf("Error %v\n", e.Type().Key())
+		// 	fmt.Printf("Error %v\n", e.Field())
+
+		// }
 
 		fmt.Printf("Custom Error: %v\n", customErr)
 
-		w.WriteHeader(http.StatusBadRequest)
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(customErr)
 		return
 	}
 
