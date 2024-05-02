@@ -36,7 +36,7 @@ func main() {
 	api := r.Group("/api")
 
 	userController := controllers.NewUserController(db)
-	userController.Routes(api, middleware.AuthMiddleware())
+	userController.Routes(api, middleware.AuthMiddleware(), middleware.Authorization(db, "admin"))
 
 	authController := controllers.NewAuthController(db)
 	authController.Routes(api)

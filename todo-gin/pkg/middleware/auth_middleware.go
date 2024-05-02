@@ -3,9 +3,11 @@ package middleware
 import (
 	"log"
 	"strings"
+	"todo-gin/pkg/domains/models"
 	"todo-gin/pkg/helpers"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -57,4 +59,43 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+
+func Authorization(db *gorm.DB, roles ...string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userData := c.MustGet("user").(*helpers.JwtCustomClaims)
+
+		var user models.User
+
+		err := db.Where("id = ?", userData.ID).First(&user).Error
+
+		if err != nil {
+			c.JSON(401, gin.H{
+				"statusCode": 401,
+				"message":    "Unauthenticated",
+				"data":       nil,
+			})
+			c.Abort()
+			return
+		}
+
+		for _, role := range roles {
+			if user.Role == role {
+				c.Next()
+				return
+			}
+		}
+
+		// Do something here
+		c.JSON(403, gin.H{
+			"statusCode": 403,
+			"message":    "Forbidden",
+			"data":       nil,
+		})
+		c.Abort()
+
+		return
+
+	}
+
 }
