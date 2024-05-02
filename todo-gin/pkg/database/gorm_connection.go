@@ -1,7 +1,7 @@
 package database
 
 import (
-	"todo-gin/pkg/domains/entity"
+	"todo-gin/pkg/domains/models"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -13,7 +13,7 @@ func InitDB() *gorm.DB {
 		panic("failed to connect database")
 	}
 
-	db.AutoMigrate(&entity.User{})
+	db.AutoMigrate(&models.User{})
 
 	return db
 }

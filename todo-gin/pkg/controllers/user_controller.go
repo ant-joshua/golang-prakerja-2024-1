@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
-	"todo-gin/pkg/domains/entity"
-	"todo-gin/pkg/models"
+
+	"todo-gin/pkg/domains/models"
+	"todo-gin/pkg/helpers"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -21,17 +23,25 @@ func NewUserController(db *gorm.DB) *UserController {
 	}
 }
 
-func (u *UserController) Routes(g *gin.RouterGroup) {
-	g.GET("/users", u.GetAllUser)
-	g.GET("/users/:id", u.GetUser)
-	g.POST("/users", u.CreateUser)
-	g.PUT("/users/:id", u.UpdateUser)
-	g.DELETE("/users/:id", u.DeleteUser)
+func (u *UserController) Routes(g *gin.RouterGroup, customMiddleware ...gin.HandlerFunc) {
+
+	userGroup := g.Group("/users")
+	userGroup.Use(customMiddleware...)
+
+	userGroup.GET("", u.GetAllUser)
+	userGroup.GET("/:id", u.GetUser)
+	userGroup.POST("", u.CreateUser)
+	userGroup.PUT("/:id", u.UpdateUser)
+	userGroup.DELETE("/:id", u.DeleteUser)
 }
 
 func (u *UserController) GetAllUser(c *gin.Context) {
 
-	var users []entity.User
+	auth := c.MustGet("user").(*helpers.JwtCustomClaims)
+
+	fmt.Printf("authUser: %+v\n", auth)
+
+	var users []models.User
 
 	err := u.db.Find(&users).Error
 
@@ -62,7 +72,7 @@ func (u *UserController) GetUser(c *gin.Context) {
 		BadRequestResponse(c, nil)
 		return
 	}
-	var user *entity.User
+	var user *models.User
 
 	// err = u.db.Where("id = ?", parseId).First(&user).Error
 
@@ -89,7 +99,7 @@ func (u *UserController) CreateUser(c *gin.Context) {
 		return
 	}
 
-	newUser := entity.User{
+	newUser := models.User{
 		Name:     createUserRequest.Name,
 		Username: createUserRequest.Username,
 		Email:    createUserRequest.Email,
@@ -117,7 +127,7 @@ func (u *UserController) DeleteUser(c *gin.Context) {
 		return
 	}
 
-	var user *entity.User
+	var user *models.User
 
 	err = u.db.First(&user, parseId).Error
 
@@ -157,7 +167,7 @@ func (u *UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	var user *entity.User
+	var user *models.User
 
 	err = u.db.First(&user, parseId).Error
 

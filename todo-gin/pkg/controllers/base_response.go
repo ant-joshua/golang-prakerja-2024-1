@@ -33,6 +33,14 @@ func NotFoundResponse(c *gin.Context) {
 	})
 }
 
+func UnauthenticatedResponse(c *gin.Context) {
+	c.JSON(401, BaseResponse{
+		StatusCode: 401,
+		Message:    "Unauthenticated",
+		Errors:     nil,
+	})
+}
+
 func InternalServerErrorResponse(c *gin.Context) {
 	c.JSON(500, BaseResponse{
 		StatusCode: 500,

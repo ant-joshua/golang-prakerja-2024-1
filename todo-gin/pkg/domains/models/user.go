@@ -1,8 +1,13 @@
 package models
 
-import "time"
+import (
+	"time"
+	"todo-gin/pkg/helpers"
 
-type UserModel struct {
+	"gorm.io/gorm"
+)
+
+type User struct {
 	ID        int       `json:"id" gorm:"primaryKey"`
 	Username  string    `json:"username"`
 	Name      string    `json:"name"`
@@ -12,8 +17,18 @@ type UserModel struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (*UserModel) TableName() string {
+func (*User) TableName() string {
 	return "users"
+}
+
+func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+	hash, err := helpers.HashPassword(u.Password)
+	if err != nil {
+		return err
+	}
+	u.Password = hash
+
+	return nil
 }
 
 type CreateUserRequest struct {
