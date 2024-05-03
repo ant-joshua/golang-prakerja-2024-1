@@ -30,7 +30,7 @@ func (a *AuthController) Login(c *gin.Context) {
 	var loginRequest models.LoginRequest
 
 	if err := c.ShouldBindJSON(&loginRequest); err != nil {
-		BadRequestResponse(c, nil)
+		models.BadRequestResponse(c, nil)
 		return
 	}
 
@@ -43,20 +43,20 @@ func (a *AuthController) Login(c *gin.Context) {
 	if err != nil {
 		log.Printf("Error when get user: %v", err)
 
-		NotFoundResponse(c)
+		models.NotFoundResponse(c)
 		return
 	}
 
 	if ok, _ := helpers.ComparePassword(user.Password, loginRequest.Password); !ok {
 		log.Printf("Password not match")
-		UnauthenticatedResponse(c)
+		models.UnauthenticatedResponse(c)
 		return
 	}
 
 	token, err := helpers.GenerateJwtToken(user.Username, user.Email, user.ID)
 
 	if err != nil {
-		InternalServerErrorResponse(c)
+		models.InternalServerErrorResponse(c)
 		return
 	}
 
@@ -65,7 +65,7 @@ func (a *AuthController) Login(c *gin.Context) {
 		Username:    user.Username,
 	}
 
-	SuccessResponse(c, resp)
+	models.SuccessResponse(c, resp)
 
 }
 
@@ -74,7 +74,7 @@ func (a *AuthController) Register(c *gin.Context) {
 	var createUserRequest models.RegisterRequest
 
 	if err := c.ShouldBindJSON(&createUserRequest); err != nil {
-		BadRequestResponse(c, nil)
+		models.BadRequestResponse(c, nil)
 		return
 	}
 
@@ -90,7 +90,7 @@ func (a *AuthController) Register(c *gin.Context) {
 	if err != nil {
 		log.Printf("Error when create user: %v", err)
 
-		InternalServerErrorResponse(c)
+		models.InternalServerErrorResponse(c)
 		return
 	}
 
@@ -101,6 +101,6 @@ func (a *AuthController) Register(c *gin.Context) {
 		Email:    newUser.Email,
 	}
 
-	SuccessResponse(c, resp)
+	models.SuccessResponse(c, resp)
 
 }

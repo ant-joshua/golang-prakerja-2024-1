@@ -69,7 +69,7 @@ func (u *UserController) GetUser(c *gin.Context) {
 	parseId, err := strconv.Atoi(id)
 
 	if err != nil {
-		BadRequestResponse(c, nil)
+		models.BadRequestResponse(c, nil)
 		return
 	}
 	var user *models.User
@@ -79,23 +79,23 @@ func (u *UserController) GetUser(c *gin.Context) {
 	err = u.db.First(&user, parseId).Error
 
 	if err != nil {
-		InternalServerErrorResponse(c)
+		models.InternalServerErrorResponse(c)
 		return
 	}
 
 	if user == nil {
-		NotFoundResponse(c)
+		models.NotFoundResponse(c)
 		return
 	}
 
-	SuccessResponse(c, user)
+	models.SuccessResponse(c, user)
 }
 
 func (u *UserController) CreateUser(c *gin.Context) {
 	var createUserRequest models.CreateUserRequest
 
 	if err := c.ShouldBindJSON(&createUserRequest); err != nil {
-		BadRequestResponse(c, nil)
+		models.BadRequestResponse(c, nil)
 		return
 	}
 
@@ -111,11 +111,11 @@ func (u *UserController) CreateUser(c *gin.Context) {
 	if err != nil {
 		log.Printf("Error when create user: %v", err)
 
-		InternalServerErrorResponse(c)
+		models.InternalServerErrorResponse(c)
 		return
 	}
 
-	SuccessResponse(c, newUser)
+	models.SuccessResponse(c, newUser)
 }
 
 func (u *UserController) DeleteUser(c *gin.Context) {
@@ -123,7 +123,7 @@ func (u *UserController) DeleteUser(c *gin.Context) {
 	parseId, err := strconv.Atoi(id)
 
 	if err != nil {
-		BadRequestResponse(c, nil)
+		models.BadRequestResponse(c, nil)
 		return
 	}
 
@@ -132,23 +132,23 @@ func (u *UserController) DeleteUser(c *gin.Context) {
 	err = u.db.First(&user, parseId).Error
 
 	if err != nil {
-		InternalServerErrorResponse(c)
+		models.InternalServerErrorResponse(c)
 		return
 	}
 
 	if user == nil {
-		NotFoundResponse(c)
+		models.NotFoundResponse(c)
 		return
 	}
 
 	err = u.db.Delete(&user).Error
 
 	if err != nil {
-		InternalServerErrorResponse(c)
+		models.InternalServerErrorResponse(c)
 		return
 	}
 
-	SuccessResponse(c, nil)
+	models.SuccessResponse(c, nil)
 }
 
 func (u *UserController) UpdateUser(c *gin.Context) {
@@ -158,12 +158,12 @@ func (u *UserController) UpdateUser(c *gin.Context) {
 	parseId, err := strconv.Atoi(id)
 
 	if err != nil {
-		BadRequestResponse(c, nil)
+		models.BadRequestResponse(c, nil)
 		return
 	}
 
 	if err := c.ShouldBindJSON(&updateUserRequest); err != nil {
-		BadRequestResponse(c, nil)
+		models.BadRequestResponse(c, nil)
 		return
 	}
 
@@ -172,12 +172,12 @@ func (u *UserController) UpdateUser(c *gin.Context) {
 	err = u.db.First(&user, parseId).Error
 
 	if err != nil {
-		InternalServerErrorResponse(c)
+		models.InternalServerErrorResponse(c)
 		return
 	}
 
 	if user == nil {
-		NotFoundResponse(c)
+		models.NotFoundResponse(c)
 		return
 	}
 
@@ -198,9 +198,9 @@ func (u *UserController) UpdateUser(c *gin.Context) {
 	if err != nil {
 		log.Printf("Error when create user: %v", err)
 
-		InternalServerErrorResponse(c)
+		models.InternalServerErrorResponse(c)
 		return
 	}
 
-	SuccessResponse(c, user)
+	models.SuccessResponse(c, user)
 }
